@@ -5,7 +5,6 @@ import Exceptions.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,7 +21,7 @@ public class StackCalculator {
         this(null);
     }
 
-    public void makeCount() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public void makeCount() throws IOException, CantCreateCommand, CantOpenConfigFile {
         Parser parser = new Parser(path);
         try {
             parser.parse();
@@ -41,7 +40,7 @@ public class StackCalculator {
             try{
                 cmd = factory.getCommand(command.getName());
             }
-            catch (UnknownCommand ex){
+            catch (UnknownCommand | CantCreateCommand ex){
                 logger.log(Level.SEVERE, "Exception:", ex);
                 return;
             }

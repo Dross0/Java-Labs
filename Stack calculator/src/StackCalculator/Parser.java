@@ -27,7 +27,9 @@ public class Parser {
         Scanner scanner = new Scanner(file);
         while (scanner.hasNextLine()){
             String line = scanner.nextLine();
-            parse_command(line);
+            if (line.charAt(0) != '#') {
+                parse_command(line);
+            }
         }
     }
 
