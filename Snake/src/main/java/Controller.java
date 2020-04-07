@@ -58,7 +58,7 @@ public class Controller {
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                System.exit(0); //TODO сделать нормальное завершение программы
+                System.exit(0);
             }
         });
     }
