@@ -3,15 +3,13 @@ import game.Direction;
 import game.Game;
 import game.GameStatus;
 import javafx.event.ActionEvent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.event.EventHandler;
 
-import java.awt.*;
+
 import java.util.Optional;
 
 public class Controller {

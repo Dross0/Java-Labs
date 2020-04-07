@@ -15,21 +15,23 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
+
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
+
 
 public class GraphicalView implements View {
-    public GraphicalView(Game game, Stage window, double windowHeight, double windowWidth){
+    public GraphicalView(Game game, Stage window, double gameWindowWidth, double gameWindowHeight, double menuWindowWidth, double menuWindowHeight){
         this.game = game;
         game.addObserver(this);
         this.window = window;
-        this.menuScene = new Scene(new Group(), 300, 400);
-        this.gameScene = new Scene(new Group(), 800, 800);
+        this.gameWindowHeight = gameWindowHeight;
+        this.gameWindowWidth = gameWindowWidth;
+        this.menuWindowHeight = menuWindowHeight;
+        this.menuWindowWidth = menuWindowWidth;
+        this.menuScene = new Scene(new Group(), menuWindowWidth, menuWindowHeight);
+        this.gameScene = new Scene(new Group(), gameWindowWidth, gameWindowHeight);
         initMenuScene();
         switchOnMenuScene();
-        this.gameWindowHeight = windowHeight;
-        this.gameWindowWidth = windowWidth;
     }
 
 
@@ -118,11 +120,11 @@ public class GraphicalView implements View {
         menuLabel.setMaxWidth(menuScene.getWidth() - 30);
         startButton = new Button("Start");
         startButton.setStyle("-fx-font: 22 arial; -fx-base: #008000;");
-        startButton.setMaxWidth(menuScene.getWidth() - 30);
+        startButton.setMaxWidth(menuWindowWidth - 30);
         startButton.setMaxHeight(30);
         exitButton = new Button("Exit");
         exitButton.setStyle("-fx-font: 22 arial; -fx-base: #FF0000;");
-        exitButton.setMaxWidth(menuScene.getWidth() - 30);
+        exitButton.setMaxWidth(menuWindowHeight - 30);
         exitButton.setMaxHeight(30);
         ObservableList<Integer> levels = FXCollections.observableArrayList(game.getLevels());
         levelChoiceBox = new ChoiceBox<>(levels);
@@ -130,19 +132,6 @@ public class GraphicalView implements View {
         FlowPane menuPane = new FlowPane(Orientation.VERTICAL, 0, 50, menuLabel, startButton, levelChoiceBox, exitButton);
         menuPane.setAlignment(Pos.CENTER);
         menuScene.setRoot(menuPane);
-    }
-
-
-    public Button getStartButton() {
-        return startButton;
-    }
-
-    public Button getExitButton() {
-        return exitButton;
-    }
-
-    public int getChosenLevel() {
-        return levelChoiceBox.getValue();
     }
 
 
@@ -167,11 +156,56 @@ public class GraphicalView implements View {
         gameScene.setRoot(pane);
     }
 
+    public Button getStartButton() {
+        return startButton;
+    }
+
+    public Button getExitButton() {
+        return exitButton;
+    }
+
+    public int getChosenLevel() {
+        return levelChoiceBox.getValue();
+    }
+
+    public double getGameWindowWidth() {
+        return gameWindowWidth;
+    }
+
+    public void setGameWindowWidth(double gameWindowWidth) {
+        this.gameWindowWidth = gameWindowWidth;
+    }
+
+    public double getGameWindowHeight() {
+        return gameWindowHeight;
+    }
+
+    public void setGameWindowHeight(double gameWindowHeight) {
+        this.gameWindowHeight = gameWindowHeight;
+    }
+
+    public double getMenuWindowWidth() {
+        return menuWindowWidth;
+    }
+
+    public void setMenuWindowWidth(double menuWindowWidth) {
+        this.menuWindowWidth = menuWindowWidth;
+    }
+
+    public double getMenuWindowHeight() {
+        return menuWindowHeight;
+    }
+
+    public void setMenuWindowHeight(double menuWindowHeight) {
+        this.menuWindowHeight = menuWindowHeight;
+    }
 
     ChoiceBox<Integer> levelChoiceBox;
     Label menuLabel;
     double gameWindowWidth;
     double gameWindowHeight;
+    double menuWindowWidth;
+    double menuWindowHeight;
     Scene menuScene;
     Scene gameScene;
     Button startButton;
