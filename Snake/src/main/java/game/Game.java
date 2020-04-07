@@ -80,8 +80,10 @@ public class Game implements Observable{
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                updateField(Optional.empty());
-                if (status != GameStatus.PLAY){
+                if (status != GameStatus.PAUSE) {
+                    updateField(Optional.empty());
+                }
+                if (status == GameStatus.WIN || status == GameStatus.LOSE){
                     timer.cancel();
                 }
             }
@@ -172,6 +174,14 @@ public class Game implements Observable{
 
     public void setCurrentLevel(int currentLevel) {
         this.currentLevel = currentLevel;
+    }
+
+    public void setPause(){
+        status = GameStatus.PAUSE;
+    }
+
+    public void removePause(){
+        status = GameStatus.PLAY;
     }
 
     private int score;

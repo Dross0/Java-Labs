@@ -1,6 +1,7 @@
 import exceptions.InvalidFieldSize;
 import game.Direction;
 import game.Game;
+import game.GameStatus;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -24,8 +25,18 @@ public class Controller {
         EventHandler<KeyEvent> keyHandler = new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                Optional<Direction> dir = getDirFromKeyCode(keyEvent.getCode());
-                game.updateField(dir);
+                if (keyEvent.getCode() == KeyCode.ESCAPE){
+                    if (game.getStatus() == GameStatus.PLAY){
+                        game.setPause();
+                    }
+                    else if (game.getStatus() == GameStatus.PAUSE){
+                        game.removePause();
+                    }
+                }
+                if (game.getStatus() != GameStatus.PAUSE) {
+                    Optional<Direction> dir = getDirFromKeyCode(keyEvent.getCode());
+                    game.updateField(dir);
+                }
             }
         };
         stage.addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);

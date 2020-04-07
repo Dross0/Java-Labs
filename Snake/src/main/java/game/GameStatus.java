@@ -6,6 +6,6 @@ public enum GameStatus {
     PLAY,
     STOP,
     STARTING,
-
+    PAUSE
 
 }
