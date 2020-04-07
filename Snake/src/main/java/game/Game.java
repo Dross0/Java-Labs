@@ -11,15 +11,30 @@ import java.util.TimerTask;
 public class Game implements Observable{
     public Game(int width, int height) throws InvalidFieldSize {
         observers = new ArrayList<>();
-        snake = new Snake();
+        levels = new ArrayList<>();
         field = new GameField(width, height);
-        field.set(snake.getHead().getY(), snake.getHead().getX(), CellType.SNAKE_BODY);
-        fruitCoordinates = makeNewFruit();
-        status = GameStatus.PLAY;
+        reset();
     }
 
     public Game(int size) throws InvalidFieldSize {
         this(size, size);
+    }
+
+
+    public void reset() throws InvalidFieldSize {
+        snake = new Snake();
+        if (field != null) {
+            field = new GameField(field.getWidth(), field.getHeight());
+        }
+        score = 0;
+        currentLevel = 1;
+        if (!levels.contains(currentLevel)) {
+            addLevel(currentLevel);
+        }
+        field.set(snake.getHead().getY(), snake.getHead().getX(), CellType.SNAKE_BODY);
+        fruitCoordinates = makeNewFruit();
+        tailForRemove = Optional.empty();
+        status = GameStatus.STOP;
     }
 
 
@@ -35,16 +50,18 @@ public class Game implements Observable{
         boolean isLose = checkLose(newHead);
         if (isLose || snake.isSnakeBody(newHead)){
             status = GameStatus.LOSE;
+            notifyObservers();
             return;
         }
         if (newHead.equals(fruitCoordinates.get())){
+            score++;
             fruitCoordinates = makeNewFruit();
             if (checkWin()){
                 status = GameStatus.WIN;
+                notifyObservers();
                 return;
             }
             this.tailForRemove = Optional.empty();
-            System.out.println(getScore());
         }
         else {
             this.tailForRemove = Optional.of(tailForRemove);
@@ -56,6 +73,9 @@ public class Game implements Observable{
     }
 
     public void run(){
+        status = GameStatus.STARTING;
+        notifyObservers();
+        status = GameStatus.PLAY;
         Timer timer = new Timer();
         TimerTask tt = new TimerTask() {
             @Override
@@ -66,7 +86,7 @@ public class Game implements Observable{
                 }
             }
         };
-        timer.schedule(tt, 0, 1000/25);
+        timer.schedule(tt, 0, 1000 / (5 * currentLevel));
     }
 
 
@@ -133,9 +153,30 @@ public class Game implements Observable{
     }
 
     public int getScore() {
-        return snake.getSnakeSize();
+        return score;
     }
 
+    public ArrayList<Integer> getLevels() {
+        return levels;
+    }
+
+    public void addLevel(int levelNumber){
+        if (!levels.contains(levelNumber)) {
+            levels.add(levelNumber);
+        }
+    }
+
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public void setCurrentLevel(int currentLevel) {
+        this.currentLevel = currentLevel;
+    }
+
+    private int score;
+    private int currentLevel;
+    private ArrayList<Integer> levels;
     private Optional<Point> tailForRemove;
     private GameStatus status;
     private Optional<Point> fruitCoordinates;

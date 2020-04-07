@@ -1,15 +1,22 @@
+import exceptions.InvalidFieldSize;
 import game.Direction;
 import game.Game;
+import javafx.event.ActionEvent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.event.EventHandler;
 
+import java.awt.*;
 import java.util.Optional;
 
 public class Controller {
-    public Controller(Game game){
+    public Controller(Game game, GraphicalView graphicalView){
         this.game = game;
+        this.view = graphicalView;
     }
 
 
@@ -22,11 +29,29 @@ public class Controller {
             }
         };
         stage.addEventHandler(KeyEvent.KEY_PRESSED, keyHandler);
+        Button startButton = view.getStartButton();
+        startButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                try {
+                    game.reset();
+                } catch (InvalidFieldSize invalidFieldSize) {
+                    invalidFieldSize.printStackTrace();
+                }
+                game.setCurrentLevel(view.getChosenLevel());
+                game.run();
+            }
+        });
+
+        Button exitButton = view.getExitButton();
+        exitButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                System.exit(0); //TODO сделать нормальное завершение программы
+            }
+        });
     }
 
-    public void start(){
-        game.run();
-    }
 
 
     private Optional<Direction> getDirFromKeyCode(final KeyCode keyCode){
@@ -45,5 +70,6 @@ public class Controller {
         return Optional.empty();
     }
 
-    private Game game;
+    private final Game game;
+    private final GraphicalView view;
 }

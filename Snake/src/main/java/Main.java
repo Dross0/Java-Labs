@@ -16,16 +16,15 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Snake");
-        stage.setWidth(800);
-        stage.setHeight(800);
-        Pane pane = new Pane();
-        Scene scene = new Scene(pane);
+//        stage.setWidth(800);
+//        stage.setHeight(800);
         Game g = new Game(50, 50);
-        GraphicalView view = new GraphicalView(g, scene, stage.getHeight(), stage.getWidth());
-        Controller c = new Controller(g);
+        for (int i = 1; i < 7; ++i){
+            g.addLevel(i);
+        }
+        GraphicalView view = new GraphicalView(g, stage, 800, 800);
+        Controller c = new Controller(g, view);
         c.config(stage);
-        c.start();
-        stage.setScene(scene);
         stage.show();
     }
 }
