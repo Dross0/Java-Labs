@@ -22,9 +22,9 @@ public class CommandFactory  {
     private CommandFactory() throws CantOpenConfigFile, CantCreateCommand {
         commands_table = new HashMap<>();
         Properties props = new Properties();
-        final String configFileName = "config/commands.ini";
+        final String configFileName = "/config/commands.ini";
         try {
-            props.load(new FileInputStream(new File(configFileName)));
+            props.load(CommandFactory.class.getResourceAsStream(configFileName));
         }
         catch (IOException ex){
             logger.log(Level.SEVERE, "Exception: ", ex);

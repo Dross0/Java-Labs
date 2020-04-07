@@ -21,11 +21,9 @@ public class Main {
         else if (args.length == 1){
             path = args[0];
         }
-        final String loggerConfigFileName = "config/logger.properties";
+        final String loggerConfigFileName = "/config/logger.properties";
         try{
-            FileInputStream cfg = new FileInputStream(loggerConfigFileName);
-            LogManager.getLogManager().readConfiguration(cfg);
-            cfg.close();
+            LogManager.getLogManager().readConfiguration(Main.class.getResourceAsStream(loggerConfigFileName));
         }
         catch (IOException ex){
             logger.log(Level.SEVERE, "Exception: ", ex);

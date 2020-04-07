@@ -38,7 +38,7 @@ public class Parser {
     }
 
     private void parse_command(String line){
-        String [] arr = line.split(" ");
+        String [] arr = line.split("[ \t]");
         commandsList.add(new Command(arr[0], Arrays.copyOfRange(arr, 1, arr.length)));
     }
 
