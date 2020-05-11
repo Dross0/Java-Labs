@@ -13,7 +13,7 @@ public class ClientController implements Runnable {
     public void run() {
         BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
         try {
-            while (true){
+            while (client.isConnected() ){
                 String line = consoleReader.readLine();
                 Message message = new Message(line, MessageType.GENERAL_MESSAGE);
                 client.sendMessage(message);

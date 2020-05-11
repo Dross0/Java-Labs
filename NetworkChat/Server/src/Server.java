@@ -10,8 +10,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 public class Server implements Runnable{
+    private final Logger logger = Logger.getLogger(Server.class.getName());
+
     private int port;
     private ServerSocket serverSocket;
     private ConcurrentHashMap<User, RequestHandler> clients= new ConcurrentHashMap<>();
@@ -63,6 +66,19 @@ public class Server implements Runnable{
         sendMessage(response);
     }
 
+    public void exitUserCommand(Message message){
+        int senderId = message.getSenderID();
+        for (User user: clients.keySet()){
+            if (user.getId() == senderId){
+                logger.info("User=" + user.getName() + " disconnected");
+                RequestHandler handler = clients.get(user);
+                handler.close();
+                removeUser(user);
+                return;
+            }
+        }
+    }
+
     private boolean userValidation(User user) {
         for (User u: clients.keySet()){
             if (u.getName().equals(user.getName())){
@@ -87,16 +103,19 @@ public class Server implements Runnable{
     public void run() {
         try {
             serverSocket = new ServerSocket(port);
-            System.out.println("Server start...");
+            logger.info("Server starting on port " + port);
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Client connected " + clientSocket.getInetAddress() + " " + clientSocket.getPort());
+                logger.info("Client connected " + clientSocket.getInetAddress() + " " + clientSocket.getPort());
                 Thread t = new Thread(new RequestHandler(clientSocket, this));
                 t.start();
             }
         }
         catch (IOException ex){
             ex.printStackTrace();
+        }
+        finally {
+            close();
         }
     }
 
@@ -114,7 +133,6 @@ public class Server implements Runnable{
 
     private void sendServerResponseMessage(Message message) {
         for (User user: clients.keySet()){
-            System.out.println("User -" +user.getName() + " ID - " + user.getId() + "M= " + message.getSenderID() );
             if (user.getId() == message.getSenderID()){
                 clients.get(user).sendMessage(message);
                 break;

@@ -6,8 +6,11 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 public class RequestHandler implements Runnable {
+    private final Logger logger = Logger.getLogger(RequestHandler.class.getName());
+
     private Socket socket;
     private Server server;
     private ObjectOutputStream writer;
@@ -47,11 +50,12 @@ public class RequestHandler implements Runnable {
             Message loginMessage = (Message) reader.readObject();
             User user = new User(loginMessage.getMessage(), socket.getPort());
             server.addUser(user, this);
-            sendMessage(new Message("User: " + user.getName() + " successful registration", MessageType.SERVER_RESPONSE));
+            logger.info("User" + user.getName() + " id=" + user.getId() + " successful registration");
+            sendMessage(new Message("User= " + user.getName() + " successful registration", MessageType.SERVER_RESPONSE));
             while (true){
                 Message message = (Message) reader.readObject();
                 message.setSenderID(user.getId());
-                System.out.println("MESSAGE: " + message.getMessage() + " TYPE: " + message.getType() + " FROM: " + message.getSenderID());
+                logger.info("Get message {"+ message.getMessage()+"}" + " Type=" + message.getType() + " From=" + message.getSenderID());
                 messageProcessing(message);
             }
         }
@@ -69,6 +73,7 @@ public class RequestHandler implements Runnable {
     public void sendMessage(Message message) {
         try {
             writer.writeObject(message);
+            writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
