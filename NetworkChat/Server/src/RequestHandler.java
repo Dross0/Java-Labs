@@ -50,11 +50,12 @@ public class RequestHandler implements Runnable {
             Message loginMessage = (Message) reader.readObject();
             User user = new User(loginMessage.getMessage(), socket.getPort());
             server.addUser(user, this);
-            logger.info("User" + user.getName() + " id=" + user.getId() + " successful registration");
-            sendMessage(new Message("User= " + user.getName() + " successful registration", MessageType.SERVER_RESPONSE));
+            logger.info("User=" + user.getName() + " id=" + user.getId() + " successful registration");
+            server.sendMessage(new Message("User= " + user.getName() + " successful registration", MessageType.SERVER_RESPONSE, user.getId()));
             while (true){
                 Message message = (Message) reader.readObject();
                 message.setSenderID(user.getId());
+                message.setSenderName(user.getName());
                 logger.info("Get message {"+ message.getMessage()+"}" + " Type=" + message.getType() + " From=" + message.getSenderID());
                 messageProcessing(message);
             }

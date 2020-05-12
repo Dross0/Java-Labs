@@ -132,6 +132,7 @@ public class Server implements Runnable{
     }
 
     private void sendServerResponseMessage(Message message) {
+        message.setSenderName("Server");
         for (User user: clients.keySet()){
             if (user.getId() == message.getSenderID()){
                 clients.get(user).sendMessage(message);

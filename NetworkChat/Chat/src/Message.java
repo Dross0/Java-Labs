@@ -9,6 +9,7 @@ public class Message implements Serializable {
     private MessageType type;
     private Calendar date;
     private int senderID;
+    private String senderName;
 
     public Message(String message, MessageType type){
         this.message = message;
@@ -21,8 +22,21 @@ public class Message implements Serializable {
         this.senderID = senderID;
     }
 
+    public Message(String message, MessageType type, int senderID, String senderName){
+        this(message, type, senderID);
+        this.senderName = senderName;
+    }
+
     public Message(@NotNull Message msg){
-        this(msg.message, msg.type, msg.senderID);
+        this(msg.message, msg.type, msg.senderID, msg.senderName);
+    }
+
+    public void setSenderName(String name){
+        this.senderName = name;
+    }
+
+    public String getSenderName() {
+        return senderName;
     }
 
     public void setSenderID(int senderID) {
