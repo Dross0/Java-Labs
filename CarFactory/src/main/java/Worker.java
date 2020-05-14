@@ -4,9 +4,11 @@ import Details.Engine;
 
 public class Worker implements Runnable {
     private CarFactory factory;
+    private final int period;
 
-    public Worker(CarFactory carFactory){
+    public Worker(CarFactory carFactory, int period){
         factory = carFactory;
+        this.period = period;
     }
 
     @Override
@@ -15,11 +17,11 @@ public class Worker implements Runnable {
             Engine engine = factory.getEngineStorage().get();
             Body body = factory.getBodyStorage().get();
             Accessory accessory = factory.getAccessoryStorage().get();
+            Thread.sleep(this.period);
             Car newCar = new Car(engine, body);
             newCar.addAccessory(accessory);
             factory.addCar(newCar);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored){
         }
 
     }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class CarFactory {
     public CarFactory(String pathCfgFile) throws IOException {
@@ -25,6 +26,7 @@ public class CarFactory {
             accessorySuppliers.add(new Supplier<>(accessoryStorage, Accessory.class, accessoryProductPeriod));
         }
         int workersNumber = getIntegerProperty(properties, "Workers");
+        this.workersPeriod = getIntegerProperty(properties, "WorkersPeriod");
         workers = Executors.newFixedThreadPool(workersNumber);
         int dealersNumber = getIntegerProperty(properties, "Dealers");
         int dealerPeriod = getIntegerProperty(properties, "DealerPeriod");
@@ -47,8 +49,21 @@ public class CarFactory {
         controller.execute(new CarStorageController(this));
     }
 
+    public void stop(){
+        for (Dealer dealer: dealers){
+            dealer.interrupt();
+        }
+        for (Supplier<Accessory> supplier: accessorySuppliers){
+            supplier.interrupt();
+        }
+        engineSupplier.interrupt();
+        bodySupplier.interrupt();
+        controller.shutdownNow();
+        workers.shutdownNow();
+    }
+
     public void makeNewCar(){
-        workers.submit(new Worker(this));
+        workers.submit(new Worker(this, workersPeriod));
     }
 
     private int getIntegerProperty(Properties properties, String key){
@@ -84,11 +99,19 @@ public class CarFactory {
         return carStorage.getSize();
     }
 
+    public int getCarsAmount(){
+        int activeCars = ((ThreadPoolExecutor) workers).getActiveCount();
+        int waitingCars = ((ThreadPoolExecutor) workers).getQueue().size();
+        int inStorage = getCarStorageSize();
+        return activeCars + waitingCars + inStorage;
+    }
+
 
     private ExecutorService controller;
     private Storage<Engine> engineStorage;
     private Storage<Body> bodyStorage;
     private Storage<Accessory> accessoryStorage;
+    private final int workersPeriod;
     private ExecutorService workers;
     private ArrayList<Dealer> dealers;
     private Supplier<Engine> engineSupplier;

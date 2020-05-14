@@ -16,7 +16,7 @@ public class Dealer extends Thread {
                 System.out.println("Car=" + car.getId() + "(Engine=" + car.getEngineId() + ", Body=" + car.getBodyId()+ ")");
                 Thread.sleep(period);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                break;
             }
 
         }

@@ -31,15 +31,15 @@ public class Storage<T>{
     }
 
 
-    public int getCapacity() {
+    public  int getCapacity() {
         return capacity;
     }
 
 
-    public int getSize(){
+    public synchronized int getSize(){
         return data.size();
     }
 
-    private int capacity;
+    private final int capacity;
     private LinkedList<T> data;
 }

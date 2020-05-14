@@ -16,7 +16,7 @@ public class Supplier<T extends Detail> extends Thread{
                 storage.add(detailMaker.getDeclaredConstructor().newInstance());
                 Thread.sleep(productionPeriod);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+               break;
             } catch (Exception e) {
                 e.printStackTrace();
             }
